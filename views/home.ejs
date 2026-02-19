@@ -1,0 +1,209 @@
+<%- include('partials/header') %>
+
+<div class="container">
+  <% if (error) { %>
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-circle"></i>
+      <span><%= error %></span>
+    </div>
+  <% } %>
+  
+  <% if (success) { %>
+    <div class="alert alert-success">
+      <i class="fas fa-check-circle"></i>
+      <span><%= success %></span>
+    </div>
+  <% } %>
+
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        <i class="fas fa-comments"></i>
+        Anonymous Confessions
+      </h1>
+      <p class="hero-subtitle">Share your thoughts freely. React to others. Stay anonymous.</p>
+      <a href="/confessions/new" class="btn btn-hero">
+        <i class="fas fa-pen-fancy"></i>
+        Share Your Confession
+      </a>
+    </div>
+  </div>
+
+  <div class="stats-overview">
+    <div class="stat-card-modern">
+      <div class="stat-icon-wrapper purple">
+        <i class="fas fa-comment-dots"></i>
+      </div>
+      <div class="stat-details">
+        <strong><%= totalConfessions %></strong>
+        <span>Total Confessions</span>
+      </div>
+    </div>
+    <div class="stat-card-modern">
+      <div class="stat-icon-wrapper blue">
+        <i class="fas fa-user-edit"></i>
+      </div>
+      <div class="stat-details">
+        <strong><%= userConfessions %></strong>
+        <span>Your Confessions</span>
+      </div>
+    </div>
+    <div class="stat-card-modern">
+      <div class="stat-icon-wrapper pink">
+        <i class="fas fa-heart"></i>
+      </div>
+      <div class="stat-details">
+        <strong><%= confessions.reduce((sum, c) => sum + c.reactions.like + c.reactions.love + c.reactions.laugh, 0) %></strong>
+        <span>Total Reactions</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="confessions-section">
+    <div class="section-header">
+      <h2>
+        <i class="fas fa-fire"></i>
+        Recent Confessions
+      </h2>
+      <div class="filter-buttons">
+        <button class="filter-btn active" onclick="filterConfessions('all')">
+          <i class="fas fa-globe"></i>
+          All
+        </button>
+        <button class="filter-btn" onclick="filterConfessions('popular')">
+          <i class="fas fa-star"></i>
+          Popular
+        </button>
+        <button class="filter-btn" onclick="filterConfessions('recent')">
+          <i class="fas fa-clock"></i>
+          Recent
+        </button>
+      </div>
+    </div>
+
+    <div class="confessions-masonry" id="confessionsContainer">
+      <% if (confessions.length === 0) { %>
+        <div class="empty-state-modern">
+          <div class="empty-icon">
+            <i class="fas fa-inbox"></i>
+          </div>
+          <h3>No confessions yet</h3>
+          <p>Be the first brave soul to share your thoughts!</p>
+          <a href="/confessions/new" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            Post First Confession
+          </a>
+        </div>
+      <% } else { %>
+        <% confessions.forEach(confession => { %>
+          <div class="confession-card-modern" data-reactions="<%= confession.reactions.like + confession.reactions.love + confession.reactions.laugh %>" data-time="<%= new Date(confession.createdAt).getTime() %>">
+            <div class="card-header-modern">
+              <div class="anonymous-tag">
+                <i class="fas fa-user-secret"></i>
+                <span>Anonymous</span>
+              </div>
+              <div class="time-ago">
+                <i class="far fa-clock"></i>
+                <span><%= getTimeAgo(confession.createdAt) %></span>
+              </div>
+            </div>
+            
+            <div class="card-body-modern">
+              <p class="confession-text-modern"><%= confession.text %></p>
+            </div>
+            
+            <div class="card-footer-modern">
+              <div class="reactions-modern">
+                <button 
+                  class="reaction-btn-modern <%= confession.userReaction === 'like' ? 'active' : '' %>" 
+                  onclick="addReaction('<%= confession._id %>', 'like', this)"
+                  data-reaction="like"
+                >
+                  <i class="fas fa-thumbs-up"></i>
+                  <span class="reaction-count" id="like-<%= confession._id %>"><%= confession.reactions.like %></span>
+                </button>
+                <button 
+                  class="reaction-btn-modern <%= confession.userReaction === 'love' ? 'active' : '' %>" 
+                  onclick="addReaction('<%= confession._id %>', 'love', this)"
+                  data-reaction="love"
+                >
+                  <i class="fas fa-heart"></i>
+                  <span class="reaction-count" id="love-<%= confession._id %>"><%= confession.reactions.love %></span>
+                </button>
+                <button 
+                  class="reaction-btn-modern <%= confession.userReaction === 'laugh' ? 'active' : '' %>" 
+                  onclick="addReaction('<%= confession._id %>', 'laugh', this)"
+                  data-reaction="laugh"
+                >
+                  <i class="fas fa-laugh"></i>
+                  <span class="reaction-count" id="laugh-<%= confession._id %>"><%= confession.reactions.laugh %></span>
+                </button>
+              </div>
+              <div class="total-reactions">
+                <i class="fas fa-fire"></i>
+                <span><%= confession.reactions.like + confession.reactions.love + confession.reactions.laugh %> reactions</span>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<script>
+function getTimeAgo(date) {
+  const now = new Date();
+  const past = new Date(date);
+  const diffMs = now - past;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return diffMins + 'm ago';
+  if (diffHours < 24) return diffHours + 'h ago';
+  if (diffDays < 7) return diffDays + 'd ago';
+  return past.toLocaleDateString();
+}
+
+function filterConfessions(type) {
+  const buttons = document.querySelectorAll('.filter-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+  event.target.closest('.filter-btn').classList.add('active');
+  
+  const container = document.getElementById('confessionsContainer');
+  const cards = Array.from(container.querySelectorAll('.confession-card-modern'));
+  
+  if (type === 'popular') {
+    cards.sort((a, b) => {
+      return parseInt(b.dataset.reactions) - parseInt(a.dataset.reactions);
+    });
+  } else if (type === 'recent') {
+    cards.sort((a, b) => {
+      return parseInt(b.dataset.time) - parseInt(a.dataset.time);
+    });
+  }
+  
+  cards.forEach(card => container.appendChild(card));
+}
+</script>
+
+<%
+function getTimeAgo(date) {
+  const now = new Date();
+  const past = new Date(date);
+  const diffMs = now - past;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return diffMins + 'm ago';
+  if (diffHours < 24) return diffHours + 'h ago';
+  if (diffDays < 7) return diffDays + 'd ago';
+  return past.toLocaleDateString();
+}
+%>
+
+<%- include('partials/footer') %>
