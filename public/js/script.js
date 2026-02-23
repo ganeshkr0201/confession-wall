@@ -1,8 +1,8 @@
 // Add reaction to confession
 async function addReaction(confessionId, reactionType, buttonElement) {
   try {
-    const card = buttonElement.closest('.confession-card-modern');
-    const allButtons = card.querySelectorAll('.reaction-btn-modern');
+    const card = buttonElement.closest('.confession-card, .confession-item');
+    const allButtons = card.querySelectorAll('.reaction-btn, .reaction-button');
     
     // Disable all buttons temporarily
     allButtons.forEach(btn => btn.disabled = true);
@@ -31,16 +31,6 @@ async function addReaction(confessionId, reactionType, buttonElement) {
         }
       });
       
-      // Update total reactions count
-      const totalReactions = data.reactions.like + data.reactions.love + data.reactions.laugh;
-      const totalElement = card.querySelector('.total-reactions span');
-      if (totalElement) {
-        totalElement.textContent = `${totalReactions} reactions`;
-      }
-      
-      // Update data attribute for filtering
-      card.dataset.reactions = totalReactions;
-      
       // Add animation
       buttonElement.classList.add('reaction-pulse');
       setTimeout(() => {
@@ -57,8 +47,8 @@ async function addReaction(confessionId, reactionType, buttonElement) {
     showNotification('Failed to add reaction', 'error');
     
     // Re-enable buttons on error
-    const card = buttonElement.closest('.confession-card-modern');
-    const allButtons = card.querySelectorAll('.reaction-btn-modern');
+    const card = buttonElement.closest('.confession-card, .confession-item');
+    const allButtons = card.querySelectorAll('.reaction-btn, .reaction-button');
     allButtons.forEach(btn => btn.disabled = false);
   }
 }

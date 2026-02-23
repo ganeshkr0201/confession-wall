@@ -1,140 +1,162 @@
 <%- include('partials/header') %>
 
 <div class="container">
-  <div class="page-header">
-    <h1>
-      <i class="fas fa-user-circle"></i>
-      My Profile
-    </h1>
-    <p class="subtitle">Your anonymous confession statistics</p>
-  </div>
-
-  <div class="profile-container">
-    <div class="profile-card">
-      <div class="profile-avatar">
+  <!-- Profile Header -->
+  <div class="profile-header-section">
+    <div class="profile-header-content">
+      <div class="profile-avatar-large">
         <i class="fas fa-user-secret"></i>
       </div>
-      <h2><%= user.displayName %></h2>
-      <p class="profile-email">
-        <i class="fas fa-envelope"></i>
-        <%= user.email %>
-      </p>
-      <p class="profile-joined">
-        <i class="fas fa-calendar-check"></i>
-        Joined <%= new Date(user.createdAt).toLocaleDateString('en-US', { 
-          year: 'numeric',
-          month: 'long', 
-          day: 'numeric'
-        }) %>
-      </p>
+      <div class="profile-info">
+        <h1><%= user.displayName %></h1>
+        <p class="profile-email"><%= user.email %></p>
+        <p class="profile-joined">
+          Member since <%= new Date(user.createdAt).toLocaleDateString('en-US', { 
+            year: 'numeric',
+            month: 'long', 
+            day: 'numeric'
+          }) %>
+        </p>
+      </div>
     </div>
+    <div class="profile-actions-header">
+      <a href="/confessions/new" class="btn btn-primary">
+        <i class="fas fa-plus"></i>
+        New Confession
+      </a>
+      <a href="/confessions/history" class="btn btn-secondary">
+        <i class="fas fa-history"></i>
+        History
+      </a>
+    </div>
+  </div>
 
-    <div class="stats-container">
-      <h3>
-        <i class="fas fa-chart-bar"></i>
-        Your Statistics
-      </h3>
-      
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+  <!-- Stats Overview -->
+  <div class="stats-section">
+    <h2 class="section-title">Activity Overview</h2>
+    <div class="stats-grid-modern">
+      <div class="stat-card-modern">
+        <div class="stat-card-header">
+          <div class="stat-icon-modern blue">
             <i class="fas fa-comment-dots"></i>
           </div>
-          <div class="stat-info">
-            <strong><%= userConfessions %></strong>
-            <span>Total Confessions</span>
-          </div>
+          <span class="stat-label">Confessions</span>
         </div>
-
-        <div class="stat-box">
-          <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-            <i class="fas fa-thumbs-up"></i>
-          </div>
-          <div class="stat-info">
-            <strong><%= stats.totalLikes %></strong>
-            <span>Likes Received</span>
-          </div>
-        </div>
-
-        <div class="stat-box">
-          <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-            <i class="fas fa-heart"></i>
-          </div>
-          <div class="stat-info">
-            <strong><%= stats.totalLoves %></strong>
-            <span>Loves Received</span>
-          </div>
-        </div>
-
-        <div class="stat-box">
-          <div class="stat-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
-            <i class="fas fa-laugh"></i>
-          </div>
-          <div class="stat-info">
-            <strong><%= stats.totalLaughs %></strong>
-            <span>Laughs Received</span>
-          </div>
-        </div>
-
-        <div class="stat-box">
-          <div class="stat-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
-            <i class="fas fa-fire"></i>
-          </div>
-          <div class="stat-info">
-            <strong><%= stats.totalLikes + stats.totalLoves + stats.totalLaughs %></strong>
-            <span>Total Reactions</span>
-          </div>
-        </div>
-
-        <div class="stat-box">
-          <div class="stat-icon" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
-            <i class="fas fa-trophy"></i>
-          </div>
-          <div class="stat-info">
-            <strong><%= userConfessions > 0 ? Math.round((stats.totalLikes + stats.totalLoves + stats.totalLaughs) / userConfessions) : 0 %></strong>
-            <span>Avg Reactions</span>
-          </div>
-        </div>
+        <div class="stat-value"><%= userConfessions %></div>
+        <div class="stat-change">Total posted</div>
       </div>
 
-      <div class="profile-actions">
-        <a href="/confessions/new" class="btn btn-primary">
-          <i class="fas fa-plus"></i>
-          New Confession
-        </a>
-        <a href="/confessions/history" class="btn btn-secondary">
-          <i class="fas fa-history"></i>
-          View History
-        </a>
+      <div class="stat-card-modern">
+        <div class="stat-card-header">
+          <div class="stat-icon-modern purple">
+            <i class="fas fa-heart"></i>
+          </div>
+          <span class="stat-label">Total Reactions</span>
+        </div>
+        <div class="stat-value"><%= stats.totalLikes + stats.totalLoves + stats.totalLaughs %></div>
+        <div class="stat-change">All time</div>
+      </div>
+
+      <div class="stat-card-modern">
+        <div class="stat-card-header">
+          <div class="stat-icon-modern green">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <span class="stat-label">Avg per Post</span>
+        </div>
+        <div class="stat-value"><%= userConfessions > 0 ? Math.round((stats.totalLikes + stats.totalLoves + stats.totalLaughs) / userConfessions * 10) / 10 : 0 %></div>
+        <div class="stat-change">Reactions</div>
+      </div>
+
+      <div class="stat-card-modern">
+        <div class="stat-card-header">
+          <div class="stat-icon-modern orange">
+            <i class="fas fa-fire"></i>
+          </div>
+          <span class="stat-label">Engagement</span>
+        </div>
+        <div class="stat-value"><%= userConfessions > 0 ? Math.round((stats.totalLikes + stats.totalLoves + stats.totalLaughs) / userConfessions * 100) : 0 %>%</div>
+        <div class="stat-change">Rate</div>
       </div>
     </div>
   </div>
 
-  <div class="info-section">
-    <h3>
-      <i class="fas fa-shield-alt"></i>
-      Privacy & Security
-    </h3>
-    <div class="info-grid">
-      <div class="info-item">
-        <i class="fas fa-user-secret"></i>
-        <div>
-          <strong>Anonymous Posting</strong>
-          <p>Your confessions are completely anonymous to other users</p>
+  <!-- Reaction Breakdown -->
+  <div class="breakdown-section">
+    <h2 class="section-title">Reaction Breakdown</h2>
+    <div class="breakdown-grid">
+      <div class="breakdown-card">
+        <div class="breakdown-icon">
+          <i class="fas fa-thumbs-up"></i>
+        </div>
+        <div class="breakdown-content">
+          <div class="breakdown-value"><%= stats.totalLikes %></div>
+          <div class="breakdown-label">Likes</div>
+          <div class="breakdown-bar">
+            <div class="breakdown-bar-fill" style="width: <%= (stats.totalLikes / Math.max(stats.totalLikes + stats.totalLoves + stats.totalLaughs, 1)) * 100 %>%"></div>
+          </div>
         </div>
       </div>
-      <div class="info-item">
-        <i class="fas fa-lock"></i>
-        <div>
-          <strong>Secret Code Protection</strong>
-          <p>Only you can edit or delete your confessions with your secret code</p>
+
+      <div class="breakdown-card">
+        <div class="breakdown-icon love">
+          <i class="fas fa-heart"></i>
+        </div>
+        <div class="breakdown-content">
+          <div class="breakdown-value"><%= stats.totalLoves %></div>
+          <div class="breakdown-label">Loves</div>
+          <div class="breakdown-bar">
+            <div class="breakdown-bar-fill love" style="width: <%= (stats.totalLoves / Math.max(stats.totalLikes + stats.totalLoves + stats.totalLaughs, 1)) * 100 %>%"></div>
+          </div>
         </div>
       </div>
-      <div class="info-item">
-        <i class="fas fa-shield-alt"></i>
-        <div>
-          <strong>Secure Authentication</strong>
-          <p>Protected by Google OAuth 2.0 authentication</p>
+
+      <div class="breakdown-card">
+        <div class="breakdown-icon laugh">
+          <i class="fas fa-laugh"></i>
+        </div>
+        <div class="breakdown-content">
+          <div class="breakdown-value"><%= stats.totalLaughs %></div>
+          <div class="breakdown-label">Laughs</div>
+          <div class="breakdown-bar">
+            <div class="breakdown-bar-fill laugh" style="width: <%= (stats.totalLaughs / Math.max(stats.totalLikes + stats.totalLoves + stats.totalLaughs, 1)) * 100 %>%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Info -->
+  <div class="info-section-modern">
+    <h2 class="section-title">Privacy & Security</h2>
+    <div class="info-cards">
+      <div class="info-card-modern">
+        <div class="info-card-icon">
+          <i class="fas fa-user-secret"></i>
+        </div>
+        <div class="info-card-content">
+          <h3>Anonymous Posting</h3>
+          <p>Your confessions are completely anonymous to other users. Your identity is never revealed.</p>
+        </div>
+      </div>
+
+      <div class="info-card-modern">
+        <div class="info-card-icon">
+          <i class="fas fa-lock"></i>
+        </div>
+        <div class="info-card-content">
+          <h3>Secret Code Protection</h3>
+          <p>Only you can edit or delete your confessions using your unique secret code.</p>
+        </div>
+      </div>
+
+      <div class="info-card-modern">
+        <div class="info-card-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="info-card-content">
+          <h3>Secure Authentication</h3>
+          <p>Your account is protected by Google OAuth 2.0 authentication system.</p>
         </div>
       </div>
     </div>
