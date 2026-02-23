@@ -5,6 +5,9 @@ const methodOverride = require('method-override');
 const path = require('path');
 const connectDB = require('./config/database');
 const passport = require('./config/passport');
+const indexRoute = require('./routes/index');
+const authRoute = require('./routes/auth');
+const confessionRoute = require('./routes/confessions');
 
 const app = express();
 
@@ -37,9 +40,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-app.use('/', require('./routes/index'));
-app.use('/auth', require('./routes/auth'));
-app.use('/confessions', require('./routes/confessions'));
+app.use('/', indexRoute);
+app.use('/auth', authRoute);
+app.use('/confessions', confessionRoute);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
